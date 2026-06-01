@@ -1,37 +1,41 @@
 const DataModel = require("../utils/data_model");
 const { Sequelize } = require("./index");
-const Satuan = require("./satuan.model");
+const Pegawai = require("./pegawai.model");
 
-class Barang extends DataModel {
+class Notifikasi extends DataModel {
   constructor() {
     super();
+
     const db_field = {
-      kode: {
+      type: {
         type: Sequelize.STRING,
       },
-      nama: {
+      title: {
         type: Sequelize.STRING,
       },
-      ukuran: {
-        type: Sequelize.STRING,
-      },
-      keterangan: {
+      message: {
         type: Sequelize.TEXT,
+      },
+      is_read: {
+        type: Sequelize.BOOLEAN,
+      },
+      link: {
+        type: Sequelize.STRING,
       },
     };
 
     const relation = [
       {
-        relation_table: new Satuan(),
-        relation_name: "satuan_id",
+        relation_table: new Pegawai(),
+        relation_name: "id_pegawai",
         relation: "has_one",
       },
     ];
 
     this.set_db_field(db_field);
-    this.set_db_name("m_barang");
+    this.set_db_name("t_notifikasi");
     this.set_relation(relation);
   }
 }
 
-module.exports = Barang;
+module.exports = Notifikasi;

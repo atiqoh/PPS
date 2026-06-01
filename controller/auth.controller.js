@@ -1,24 +1,16 @@
-const {
-  Sequelize,
-  sequelize,
-  User,
-  LoginHistory,
-} = require("../models/sync_db");
+const { Sequelize, sequelize, Pegawai } = require("../models/sync_db");
 const Op = Sequelize.Op;
 const { generateToken, deleteDataByKey } = require("../utils/util");
 const { set_response } = require("./page.controller");
-const { v4: uuidv4 } = require("uuid");
 
 // CREATE: untuk enambahkan data kedalam tabel company
 exports.doLogin = async (req, res) => {
   let email = req.body.email || "";
   let password = req.body.password || "";
-  let deviceid = req.body.deviceid || uuidv4();
 
-  User.db
+  Pegawai.db
     .findOne({
       where: {
-        //your where conditions, or without them if you need ANY entry
         email: {
           [Op.like]: email,
         },
@@ -27,27 +19,20 @@ exports.doLogin = async (req, res) => {
     })
     .then(async function (row) {
       if (row != null) {
-        let cekPassword = await User.cls.verifyPassword(password, row.password);
+        let cekPassword = await Pegawai.cls.verifyPassword(
+          password,
+          row.password_hash
+        );
         if (cekPassword) {
-          let id = row.id;
-          await User.db.update(
-            { last_login: sequelize.fn("NOW") },
-            {
-              where: { id },
-            }
-          );
           let data = row.toJSON();
           deleteDataByKey(data, [
-            "salt",
-            "password",
+            "password_hash",
             "created_at",
             "updated_at",
             "delete_at",
-            "hak_akses_id",
+            "id_jabatan",
           ]);
-          data["deviceid"] = deviceid;
           let token = await generateToken(data);
-          await LoginHistory.db.create({ deviceid: deviceid, token: token });
           res.json(set_response(200, "Login berhasil", token));
         } else {
           res

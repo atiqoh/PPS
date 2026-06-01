@@ -1,4 +1,4 @@
-const { User } = require("../models/sync_db");
+const { Pegawai } = require("../models/sync_db");
 const { verifyToken } = require("../utils/util");
 const { set_response } = require("../controller/page.controller");
 
@@ -12,7 +12,7 @@ const authMiddleware = async (req, res, next) => {
       const token = Authorization.replaceAll("Bearer ", "");
       let decoded = verifyToken(token);
 
-      const user = await User.db.findOne({
+      const user = await Pegawai.db.findOne({
         where: {
           id: decoded.id,
         },
