@@ -35,6 +35,7 @@ module.exports = (app) => {
 
   return app;
 
+  // atiqoh hapus comment 2
   // atiqoh hapus comment
   // ini yang baru
 };
