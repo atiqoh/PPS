@@ -5,6 +5,22 @@ module.exports = (app) => {
     });
   });
 
+  //endpoint untuk cek koneksi ke database 
+  app.get("/db", async (req, res) => {
+    const db = require("./models/sync_db");
+    try {
+      await db.sequelize.authenticate();
+      res.json({
+        message: "Koneksi ke database berhasil",
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Koneksi ke database gagal",
+        error: error.message,
+      });
+    }
+  });
+
   app.get("/dev/build", async (req, res) => {
     const db = require("./models/sync_db");
     db.sequelize.sync({ alter: true });
@@ -13,17 +29,9 @@ module.exports = (app) => {
     });
   });
 
-  // app.use("/master/user", require("./routing/user.routes"));
-  // app.use("/master/hak_akses", require("./routing/hak_akses.routes"));
-  // app.use("/transaksi", require("./routing/transaksi.routes"));
-  // app.use(
-  //   "/transaksi_penyesuaian",
-  //   require("./routing/transaksi_penyesuaian.routes")
-  // );
-  // app.use("/satuan", require("./routing/satuan.routes"));
-  // app.use("/barang", require("./routing/barang.routes"));
-  // app.use("/laporan", require("./routing/laporan.routes"));
   app.use("/auth", require("./routing/auth.route"));
+  app.use("/pegawai", require("./routing/pegawai.routes"));
+  app.use("/lembur", require("./routing/lembur.routes"));
 
   return app;
 };
