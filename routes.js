@@ -32,6 +32,7 @@ module.exports = (app) => {
   app.use("/auth", require("./routing/auth.route"));
   app.use("/pegawai", require("./routing/pegawai.routes"));
   app.use("/lembur", require("./routing/lembur.routes"));
+  app.use("/penggajian", require("./routing/penggajian.routes"));
 
   return app;
 
