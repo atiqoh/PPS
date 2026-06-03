@@ -36,4 +36,5 @@ module.exports = (app) => {
   return app;
 
   // ini punyaku
+  // ini yang baru
 };
