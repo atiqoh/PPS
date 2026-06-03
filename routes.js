@@ -34,4 +34,6 @@ module.exports = (app) => {
   app.use("/lembur", require("./routing/lembur.routes"));
 
   return app;
+
+  // ini punyaku
 };
