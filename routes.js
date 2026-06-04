@@ -35,8 +35,4 @@ module.exports = (app) => {
   app.use("/penggajian", require("./routing/penggajian.routes"));
 
   return app;
-
-  // atiqoh hapus comment 2
-  // atiqoh hapus comment
-  // ini yang baru
 };
