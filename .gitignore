@@ -1,3 +1,5 @@
 /public
 .env
 node_modules
+uploads/absensi/*
+!uploads/absensi/.gitkeep

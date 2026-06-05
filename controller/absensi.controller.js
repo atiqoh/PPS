@@ -1,7 +1,6 @@
 const { Sequelize, Absensi, Pegawai } = require("../models/sync_db");
 const Op = Sequelize.Op;
 const { set_response } = require("./page.controller");
-const { isEmpty } = require("../utils/util");
 
 const path = require("path");
 const fs = require("fs");
@@ -242,6 +241,116 @@ exports.reject = async (req, res) => {
             data: updatedData,
          })
       );
+   } catch (error) {
+      res.status(500).json(
+         set_response(500, error.message || "Terjadi kesalahan pada server", null)
+      );
+   }
+};
+
+exports.checkIn = async (req, res) => {
+   try {
+      const { id_pegawai, lokasi_masuk } = req.body;
+      const file = req.file;
+
+      if (!id_pegawai) {
+         if (file) {
+            const fs = require('fs');
+            fs.unlinkSync(file.path);
+         }
+         return res.status(400).json(
+            set_response(400, "id_pegawai wajib diisi", null)
+         );
+      }
+
+      if (!file) {
+         return res.status(400).json(
+            set_response(400, "Foto bukti absensi wajib diupload", null)
+         );
+      }
+
+      const pegawai = await Pegawai.db.findOne({
+         where: { id: id_pegawai }
+      });
+
+      if (!pegawai) {
+         if (file) {
+            const fs = require('fs');
+            fs.unlinkSync(file.path);
+         }
+         return res.status(404).json(
+            set_response(404, "Pegawai tidak ditemukan", null)
+         );
+      }
+
+      const foto_masuk = `${file.filename}`;
+      const tanggal = new Date().toISOString().split('T')[0];
+      const jam_masuk = new Date().toTimeString().split(' ')[0];
+      const status = null;
+      const status_validasi = "pending";
+      const nilai_potongan = 0;
+      const total_potongan = 0;
+
+      const data = await Absensi.db.create({
+         id_pegawai: id_pegawai,
+         tanggal: tanggal,
+         jam_masuk: jam_masuk,
+         status: status,
+         foto_masuk: foto_masuk,
+         catatan: null,
+         validasi_oleh: null,
+         status_validasi: status_validasi,
+         tanggal_validasi: null,
+         lokasi_masuk: lokasi_masuk || null,
+         nilai_potongan: nilai_potongan,
+         total_potongan: total_potongan,
+      });
+
+      res.json(
+         set_response(201, "Check-in berhasil", {
+            data: data,
+         })
+      );
+   } catch (error) {
+      if (req.file) {
+         const fs = require('fs');
+         fs.unlinkSync(req.file.path);
+      }
+      res.status(500).json(
+         set_response(500, error.message || "Terjadi kesalahan pada server", null)
+      );
+   }
+};
+
+exports.getPhoto = async (req, res) => {
+   try {
+      const { id } = req.params;
+      const absensi = await Absensi.db.findOne({
+         where: { id: id },
+      });
+
+      if (!absensi) {
+         return res.status(404).json(
+            set_response(404, "Data absensi tidak ditemukan", null)
+         );
+      }
+
+      if (!absensi.foto_masuk) {
+         return res.status(404).json(
+            set_response(404, "Foto tidak ditemukan", null)
+         );
+      }
+
+      let fileName = absensi.foto_masuk;
+      const filePath = path.join(__dirname, '../uploads/absensi', fileName);
+
+      if (!fs.existsSync(filePath)) {
+         return res.status(404).json(
+            set_response(404, "File foto tidak ditemukan di server", null)
+         );
+      }
+
+      res.sendFile(filePath);
    } catch (error) {
       res.status(500).json(
          set_response(500, error.message || "Terjadi kesalahan pada server", null)
