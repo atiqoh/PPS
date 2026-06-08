@@ -9,7 +9,7 @@ class SettingGlobal extends DataModel {
       potongan_terlambat_per_hari: {
         type: Sequelize.DOUBLE(11, 2),
       },
-      insentif_terlambat_per_jam: {
+      insentif_lembur_per_jam: {
         type: Sequelize.DOUBLE(11, 2),
       },
       jam_masuk: {

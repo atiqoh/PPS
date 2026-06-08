@@ -82,7 +82,7 @@ const runSeeder = async () => {
 
     await db.SettingGlobal.db.create({
       potongan_terlambat_per_hari: 50000,
-      insentif_terlambat_per_jam: 20000,
+      insentif_lembur_per_jam: 20000,
       jam_masuk: "08:00:00",
       radius_gps: 100,
     });
