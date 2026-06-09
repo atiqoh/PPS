@@ -1,4 +1,4 @@
-const { Sequelize, Absensi, Pegawai } = require("../models/sync_db");
+const { Sequelize, Absensi, Pegawai, SettingGlobal } = require("../models/sync_db");
 const Op = Sequelize.Op;
 const { set_response } = require("./page.controller");
 
@@ -248,6 +248,15 @@ exports.reject = async (req, res) => {
    }
 };
 
+function hitungTerlambat(jamStandar, jamCheckIn) {
+   const [h1, m1, s1] = jamStandar.split(':').map(Number);
+   const [h2, m2, s2] = jamCheckIn.split(':').map(Number);
+   const standarSeconds = h1 * 3600 + m1 * 60 + s1;
+   const checkInSeconds = h2 * 3600 + m2 * 60 + s2;
+   const selisih = checkInSeconds - standarSeconds;
+   return selisih > 0 ? selisih : 0;
+}
+
 exports.checkIn = async (req, res) => {
    try {
       const { id_pegawai, lokasi_masuk } = req.body;
@@ -288,8 +297,16 @@ exports.checkIn = async (req, res) => {
       const jam_masuk = new Date().toTimeString().split(' ')[0];
       const status = null;
       const status_validasi = "pending";
-      const nilai_potongan = 0;
+      let nilai_potongan = 0;
       const total_potongan = 0;
+
+      // terkait penggajian
+      const setting = await SettingGlobal.db.findOne();
+      const jamStandar = setting.jam_masuk ?? 0;
+      const potonganPerHari = setting.potongan_terlambat_per_hari ?? 0;
+      const jamCheckIn = jam_masuk;
+      const menitTerlambat = hitungTerlambat(jamStandar, jamCheckIn);
+      nilai_potongan = menitTerlambat > 0 ? potonganPerHari : 0;
 
       const data = await Absensi.db.create({
          id_pegawai: id_pegawai,
