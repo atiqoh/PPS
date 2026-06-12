@@ -259,7 +259,7 @@ function hitungTerlambat(jamStandar, jamCheckIn) {
 
 exports.checkIn = async (req, res) => {
    try {
-      const { id_pegawai, lokasi_masuk } = req.body;
+      const { id_pegawai, lokasi_masuk, catatan } = req.body;
       const file = req.file;
 
       if (!id_pegawai) {
@@ -314,7 +314,7 @@ exports.checkIn = async (req, res) => {
          jam_masuk: jam_masuk,
          status: status,
          foto_masuk: foto_masuk,
-         catatan: null,
+         catatan: catatan ?? null,
          validasi_oleh: null,
          status_validasi: status_validasi,
          tanggal_validasi: null,
