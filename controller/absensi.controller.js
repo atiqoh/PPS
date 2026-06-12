@@ -14,6 +14,11 @@ exports.getAll = async (req, res) => {
    let offset = (page - 1) * limit;
    let where = {};
 
+   let status_validasi = req.query.status_validasi || "";
+   if (status_validasi && status_validasi !== "all") {
+      where.status_validasi = status_validasi;
+   }
+
    // sorting (bisa multiple column)
    sortBy = sortBy.split(",");
    sortType = sortType.split(",");
