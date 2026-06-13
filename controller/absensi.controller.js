@@ -53,10 +53,10 @@ exports.getAll = async (req, res) => {
       where.tanggal = { [Op.lte]: endDate };
    }
 
-   let countData = await Absensi.db.count({
-      where: where,
-      paranoid: true,
-   });
+   // let countData = await Absensi.db.count({
+   //    where: where,
+   //    paranoid: true,
+   // });
 
    await Absensi.db
       .findAll({
@@ -82,7 +82,7 @@ exports.getAll = async (req, res) => {
 
          res.json(
             set_response(200, "Sukses menampilkan seluruh data absensi.", {
-               count: countData,
+               // count: countData,
                data: rows,
             }),
          );
