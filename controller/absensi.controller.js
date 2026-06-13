@@ -1,4 +1,4 @@
-const { Sequelize, Absensi, Pegawai, SettingGlobal } = require("../models/sync_db");
+const { Sequelize, Absensi, Pegawai, SettingGlobal, Penggajian } = require("../models/sync_db");
 const Op = Sequelize.Op;
 const { set_response } = require("./page.controller");
 
@@ -327,6 +327,26 @@ exports.checkIn = async (req, res) => {
          nilai_potongan: nilai_potongan,
          total_potongan: total_potongan,
       });
+
+      // jika ada potongan, update di penggajian
+      if (nilai_potongan > 0) {
+         const bulan = new Date().getMonth() + 1;
+         const tahun = new Date().getFullYear();
+
+         let penggajian = await Penggajian.db.findOne({
+            where: {
+               id_pegawai: id_pegawai,
+               periode_bulan: bulan,
+               periode_tahun: tahun
+            }
+         });
+
+         if (penggajian) {
+            await penggajian.increment('total_potongan_terlambat', {
+               by: nilai_potongan
+            });
+         }
+      }
 
       res.json(
          set_response(201, "Check-in berhasil", {
