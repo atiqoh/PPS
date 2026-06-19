@@ -1,15 +1,13 @@
 const penggajianController = require("../controller/penggajian.controller")
-// For parsing application/json (JSON payloads)
-// app.use(express.json());
-
-// For parsing application/x-www-form-urlencoded (HTML form submissions)
-// app.use(express.urlencoded({ extended: true }));
-
 const router = require("express").Router();
 
 
-router.get("/getall", penggajianController.getAll);
-router.post("/close_confirmation", penggajianController.calculatePayroll);
-router.post("/close_payroll", penggajianController.closePayroll);
+router.get("/", penggajianController.getAll);
+router.get("/:uid", penggajianController.getByUid);
+router.post("/close", penggajianController.calculatePayroll);
+router.patch("/close/edit", penggajianController.updatePenggajian);
+router.patch("/close/confirm", penggajianController.closePayroll);
+router.get("/slipgaji/:uid", penggajianController.viewSlipGaji);
+router.get("/slipgaji/:uid/cetak", penggajianController.cetakSlipGaji);
 
 module.exports = router;
