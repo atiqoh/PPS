@@ -66,7 +66,7 @@ async function calculatePayroll(req, res) {
     const startDate = new Date(periode_tahun, periode_bulan - 1, 1);
     const endDate = new Date(periode_tahun, periode_bulan, 0);
 
-    if (!periode_tahun && !periode_bulan) return res.status(404).json(set_response(404, "missing periode_bulan and periode_tahun"));
+    if (!periode_tahun || !periode_bulan) return res.status(404).json(set_response(404, "missing periode_bulan or periode_tahun"));
 
 
     if (refetch) {
@@ -333,6 +333,7 @@ async function viewSlipGaji(req, res) {
         });
         if (slipGaji)
             res.json(set_response(200, "Success get slip gaji", slipGaji));
+        else return res.json(set_response(404, "data gaji tidak ditemukan"));
     } catch (error) {
         console.log(error);
         res.status(503).json(set_response(503, error));
